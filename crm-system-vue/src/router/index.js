@@ -2,7 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
 import Categories from '../views/Categories.vue'
+import DetailRecord from '../views/DetailRecord.vue'
 
 Vue.use(VueRouter)
 
@@ -19,10 +21,22 @@ const routes = [
     component: Login
   },
   {
+    path: '/register',
+    name: 'register',
+    meta: {layout: 'empty'},
+    component: Register
+  },
+  {
     path: '/categories',
     name: 'categories',
     meta: {layout: 'main'},
     component: Categories
+  },
+  {
+    path: '/detail-record',
+    name: 'detail-record',
+    meta: {layout: 'main'},
+    component: DetailRecord
   }
 ]
 
