@@ -5,9 +5,9 @@
         <h4>Редактировать</h4>
       </div>
 
-      <form>
+      <form @submit.prevent="submitHandler">
         <div class="input-field">
-          <select ref="select">
+          <select ref="select" v-model="current">
             <option v-for="c of categories" :key="c.id" :value="c.id">{{c.title}}</option>
           </select>
           <label>Выберите категорию</label>
@@ -63,11 +63,44 @@ export default {
   data: () => ({
     title: "",
     limit: 1,
-    select: null
+    select: null,
+    current: null
   }),
+  methods: {
+    async submitHandler() {
+      if (this.$v.$invalid) {
+        this.$v.$touch();
+        return;
+      }
+
+      try {
+        const categoryData = {
+          id: this.current,
+          title: this.title,
+          limit: this.limit
+        };
+        await this.$store.dispatch("updateCategory", categoryData);
+        this.$message("Категория успешно обновлена");
+        this.$emit("updated", categoryData);
+      } catch (e) {}
+    }
+  },
   validations: {
     title: { required },
     limit: { minValue: minValue(1) }
+  },
+  watch: {
+    current(catId) {
+      const { title, limit } = this.categories.find(c => c.id === catId);
+      this.title = title;
+      this.limit = limit;
+    }
+  },
+  created() {
+    const { id, title, limit } = this.categories[0];
+    this.current = id;
+    this.title = title;
+    this.limit = limit;
   },
   mounted() {
     this.select = M.FormSelect.init(this.$refs.select);
