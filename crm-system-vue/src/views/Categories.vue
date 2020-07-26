@@ -8,7 +8,7 @@
       <div class="row" v-else>
         <CategoryCreate @created="addNewCategory" />
 
-        <CategoryEdit />
+        <CategoryEdit :categories="categories" />
       </div>
     </section>
   </div>
@@ -35,7 +35,6 @@ export default {
   methods: {
     addNewCategory(category) {
       this.categories.push(category);
-      console.log(category);
     }
   }
 };
