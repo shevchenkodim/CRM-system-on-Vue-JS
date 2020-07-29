@@ -98,14 +98,26 @@ export default {
     },
   },
   methods: {
-    handleSubmit() {
+    async handleSubmit() {
       if (this.$v.$invalid) {
         this.$v.$touch();
         return;
       }
 
       if (this.canCreateRecord) {
-        console.log("okey");
+        try {
+          await this.$store.dispatch("createRecord", {
+            categoryId: this.category,
+            amount: this.amount,
+            description: this.description,
+            type: this.type,
+            date: new Date().toJSON(),
+          });
+          const bill =
+            this.type === "income"
+              ? this.info.bill + this.amount
+              : this.info.bill - this.amount;
+        } catch (e) {}
       } else {
         this.$message(
           `Недостаточно средств на счете (${this.amount - this.info.bill})`
