@@ -14,7 +14,7 @@
           :key="categories.length + updateCount"
           @updated="updateCategories"
         />
-        <p v-else class="center">Категорий пока нет</p>
+        
       </div>
     </section>
   </div>
