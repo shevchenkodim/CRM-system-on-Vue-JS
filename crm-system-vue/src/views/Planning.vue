@@ -13,13 +13,17 @@
     </p>
 
     <section v-else>
-      <div>
+      <div v-for="cat of categories" :key="cat.id">
         <p>
-          <strong>Девушка:</strong>
-          12 122 из 14 0000
+          <strong>{{cat.title}}:</strong>
+          {{cat.spend | currency}} из {{cat.limit | currency}}
         </p>
-        <div class="progress">
-          <div class="determinate green" style="width:40%"></div>
+        <div class="progress" v-tooltip="cat.tooltip">
+          <div
+            class="determinate"
+            :class="[cat.progressColor]"
+            :style="{width: cat.progressPercent + '%'}"
+          ></div>
         </div>
       </div>
     </section>
@@ -28,9 +32,9 @@
 
 <script>
 import { mapGetters } from "vuex";
-
+import currencyFilter from "@/filters/currency.filter";
 export default {
-  name: "planing",
+  name: "planning",
   data: () => ({
     loading: true,
     categories: [],
@@ -44,22 +48,28 @@ export default {
 
     this.categories = categories.map((cat) => {
       const spend = records
-        .filter((r) => r.categoryID === cat.id)
+        .filter((r) => r.categoryId === cat.id)
         .filter((r) => r.type === "outcome")
         .reduce((total, record) => {
           return (total += +record.amount);
         }, 0);
 
-      const persent = (100 * spend) / cat.limit;
-      const progressPersent = persent > 100 ? 100 : persent;
+      const percent = (100 * spend) / cat.limit;
+      const progressPercent = percent > 100 ? 100 : percent;
       const progressColor =
-        persent < 60 ? "green" : persent < 100 ? "yellow" : "red";
+        percent < 60 ? "green" : percent < 100 ? "yellow" : "red";
+
+      const tooltipValue = cat.limit - spend;
+      const tooltip = `${
+        tooltipValue < 0 ? "Превышение на" : "Осталось"
+      } ${currencyFilter(Math.abs(tooltipValue))}`;
 
       return {
         ...cat,
-        progressPersent,
+        progressPercent,
         progressColor,
         spend,
+        tooltip,
       };
     });
 
